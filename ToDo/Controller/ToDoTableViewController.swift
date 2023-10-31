@@ -8,6 +8,8 @@
 import UIKit
 import CoreData
 
+let smileyArray = ["🦒", "🐒", "🌴", "🦦", "🐡", "🧜🏽", "🦔", "🦀", "🐋", "🐙", "🦙", "🦘"]
+
 class ToDoTableViewController: UITableViewController {
     
     var managedObjectContext: NSManagedObjectContext?
@@ -138,6 +140,12 @@ extension ToDoTableViewController {
         let toDoList = toDoLists[indexPath.row]
         cell.textLabel?.text = toDoList.item
         cell.accessoryType = toDoList.completed ? .checkmark : .none
+        
+        let randomSmileyIndex = Int.random(in: 0..<smileyArray.count)
+            cell.imageView?.image = nil
+            
+            cell.textLabel?.text = "\(smileyArray[randomSmileyIndex]) \(toDoList.item ?? "")"
+        
         return cell
     }
     
