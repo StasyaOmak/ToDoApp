@@ -48,7 +48,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="Axc-OY-ZYH">
-                        <barButtonItem key="leftBarButtonItem" image="minus.square" catalog="system" id="BDM-Sw-X4J"/>
+                        <barButtonItem key="leftBarButtonItem" image="minus.square" catalog="system" id="BDM-Sw-X4J">
+                            <connections>
+                                <action selector="deleteAllItemsTapped:" destination="bwz-TF-hsn" id="fBO-lX-tgu"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="plus.app" catalog="system" id="71q-Te-3oN">
                             <connections>
                                 <action selector="addNewItemTapped:" destination="bwz-TF-hsn" id="jd2-Pb-Xnn"/>
