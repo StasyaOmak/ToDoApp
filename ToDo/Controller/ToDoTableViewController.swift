@@ -8,9 +8,13 @@
 import UIKit
 import CoreData
 
-let smileyArray = ["🦒", "🐒", "🌴", "🦦", "🐡", "🧜🏽", "🦔", "🦀", "🐋", "🐙", "🦙", "🦘"]
+
+
+
 
 class ToDoTableViewController: UITableViewController {
+    
+    var smileyArray = ["🦒", "🐒", "🌴", "🦦", "🐡", "🧜🏽", "🦔", "🦀", "🐋", "🐙", "🦙", "🦘"]
     
     var managedObjectContext: NSManagedObjectContext?
     //    var toDos: [String] = []
@@ -19,19 +23,18 @@ class ToDoTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+       
+        
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
         managedObjectContext = appDelegate.persistentContainer.viewContext
         loadCoreData()
         
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        tableView.isEditing = true
+        tableView.allowsSelectionDuringEditing = true
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-    
-    
+
     @IBAction func addNewItemTapped(_ sender: Any) {
         
         let alertController = UIAlertController(title: "To Do List", message: "Do you want to add a  new item?", preferredStyle: .alert)
@@ -108,8 +111,18 @@ extension ToDoTableViewController {
         loadCoreData()
     }
     
+    func saveToDoListArrayFull() {
+        for name in toDoLists {
+            let entity = NSEntityDescription.entity(forEntityName: "ToDo", in: self.managedObjectContext!)
+            let list = NSManagedObject(entity: entity!, insertInto: self.managedObjectContext)
+            
+            list.setValue(name.item, forKey: "item")
+            saveCoreData()
+        }
+    }
     
-    func deleteAllCoreData() {
+    
+    func deleteAllCoreData(withSave: Bool = true) {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ToDo")
         
@@ -117,7 +130,9 @@ extension ToDoTableViewController {
         
         do {
             try managedObjectContext?.execute(entityRequest)
-            saveCoreData()
+            if withSave {
+                saveCoreData()
+            }
         } catch let error {
             print(error.localizedDescription)
             fatalError("Error in saving item inot ToDo")
@@ -136,17 +151,38 @@ extension ToDoTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "toDoCell", for: indexPath)
-        
         let toDoList = toDoLists[indexPath.row]
-        cell.textLabel?.text = toDoList.item
-        cell.accessoryType = toDoList.completed ? .checkmark : .none
+        print(indexPath.row)
+        print(toDoList.item)
         
-        let randomSmileyIndex = Int.random(in: 0..<smileyArray.count)
-            cell.imageView?.image = nil
-            
-            cell.textLabel?.text = "\(smileyArray[randomSmileyIndex]) \(toDoList.item ?? "")"
+        let currentSmileyIndex = indexPath.row % smileyArray.count
+        let currentSmiley = smileyArray[currentSmileyIndex]
+        
+        cell.imageView?.image = nil
+        cell.textLabel?.text = "\(currentSmiley) \(toDoList.item ?? "")"
+               
+        
         
         return cell
+    }
+    
+
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+ 
+        let movedTask = smileyArray.remove(at: sourceIndexPath.row)
+        print("\(sourceIndexPath.row) - sourceIndex")
+        
+        smileyArray.insert(movedTask, at: destinationIndexPath.row)
+        print("\(destinationIndexPath.row) - destination")
+
+        
+        let movedToDoListsTask = toDoLists.remove(at: sourceIndexPath.row)
+        toDoLists.insert(movedToDoListsTask, at: destinationIndexPath.row)
+        
+        deleteAllCoreData(withSave: false)
+        saveToDoListArrayFull()
+        
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -155,48 +191,18 @@ extension ToDoTableViewController {
         saveCoreData()
     }
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
+
     
     
-    // Override to support editing the table view.
+   
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
+            
             managedObjectContext?.delete(toDoLists[indexPath.row])
         }
         saveCoreData()
     }
     
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
+  
 }
 
