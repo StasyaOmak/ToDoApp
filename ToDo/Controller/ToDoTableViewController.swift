@@ -162,7 +162,6 @@ extension ToDoTableViewController {
         cell.textLabel?.text = "\(currentSmiley) \(toDoList.item ?? "")"
                
         
-        
         return cell
     }
     
