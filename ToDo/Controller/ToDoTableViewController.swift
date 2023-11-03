@@ -17,18 +17,17 @@ class ToDoTableViewController: UITableViewController {
     var smileyArray = ["🦒", "🐒", "🌴", "🦦", "🐡", "🧜🏽", "🦔", "🦀", "🐋", "🐙", "🦙", "🦘"]
     
     var managedObjectContext: NSManagedObjectContext?
-    //    var toDos: [String] = []
+    
     var toDoLists = [ToDo]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-       
         
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
         managedObjectContext = appDelegate.persistentContainer.viewContext
         loadCoreData()
-        
+       
         
         tableView.isEditing = true
         tableView.allowsSelectionDuringEditing = true
@@ -53,8 +52,6 @@ class ToDoTableViewController: UITableViewController {
             
             list.setValue(textField?.text, forKey: "item")
             self.saveCoreData()
-            //            self.toDos.append(textField!.text!)
-            //            self.tableView.reloadData()
         }
         
         let cancelActionButton = UIAlertAction(title: "Cancel", style: .destructive)
@@ -144,45 +141,41 @@ extension ToDoTableViewController {
 extension ToDoTableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+        
         return toDoLists.count
     }
     
+    // MARK: - smileyArray
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "toDoCell", for: indexPath)
         let toDoList = toDoLists[indexPath.row]
-        print(indexPath.row)
-        print(toDoList.item)
         
         let currentSmileyIndex = indexPath.row % smileyArray.count
         let currentSmiley = smileyArray[currentSmileyIndex]
         
-        cell.imageView?.image = nil
         cell.textLabel?.text = "\(currentSmiley) \(toDoList.item ?? "")"
-               
         
         return cell
     }
     
-
+    // MARK: - Moved cells
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
- 
+        
         let movedTask = smileyArray.remove(at: sourceIndexPath.row)
-        print("\(sourceIndexPath.row) - sourceIndex")
         
         smileyArray.insert(movedTask, at: destinationIndexPath.row)
-        print("\(destinationIndexPath.row) - destination")
-
         
         let movedToDoListsTask = toDoLists.remove(at: sourceIndexPath.row)
         toDoLists.insert(movedToDoListsTask, at: destinationIndexPath.row)
         
         deleteAllCoreData(withSave: false)
-        saveToDoListArrayFull()
+        saveToDoListArrayFull() //
         
     }
+    
+    // MARK: - clicking on a cell (tableView.allowsSelectionDuringEditing = true)
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -190,18 +183,18 @@ extension ToDoTableViewController {
         saveCoreData()
     }
     
-
     
     
-   
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            
-            managedObjectContext?.delete(toDoLists[indexPath.row])
+    // MARK: - Deleting line by line (tableView.isEditing = true)
+    
+        override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            if editingStyle == .delete {
+    
+                managedObjectContext?.delete(toDoLists[indexPath.row])
+            }
+            saveCoreData()
         }
-        saveCoreData()
-    }
     
-  
+    
 }
 
