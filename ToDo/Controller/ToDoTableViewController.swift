@@ -22,16 +22,11 @@ class ToDoTableViewController: UITableViewController {
         managedObjectContext = appDelegate.persistentContainer.viewContext
         loadCoreData()
         setupView()
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-        
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     @objc func addNewItem(){
         print("clicked")
-        let alertController = UIAlertController(title: "Do To List", message: "Do you want to add new item?", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "To Do List", message: "Do you want to add new item?", preferredStyle: .alert)
         alertController.addTextField { textFieldValue in
             textFieldValue.placeholder = "Your title here..."
             print(textFieldValue)
@@ -55,6 +50,31 @@ class ToDoTableViewController: UITableViewController {
         present(alertController, animated: true)
     }
     
+    @objc func addDeleteItem() {
+        print("clicked")
+        let alertController = UIAlertController(title: "Delete All Data", message: "Do you want to delete your list?", preferredStyle: .actionSheet)
+
+        let deleteActionButton = UIAlertAction(title: "Delete", style: .default) { deleteAction in
+            self.deleteAllItems()
+        }
+
+        let cancelActionButton = UIAlertAction(title: "Cancel", style: .destructive)
+
+        alertController.addAction(deleteActionButton)
+        alertController.addAction(cancelActionButton)
+
+        present(alertController, animated: true)
+    }
+
+    func deleteAllItems() {
+        for toDo in toDoLists {
+            managedObjectContext?.delete(toDo)
+        }
+        saveCoreData()
+    }
+
+    
+    
     @objc func longPress(sender: UILongPressGestureRecognizer){
         if sender.state == UIGestureRecognizer.State.began {
             let touchPath = sender.location(in: tableView)
@@ -66,11 +86,17 @@ class ToDoTableViewController: UITableViewController {
     }
     
     private func setupView() {
+        
         view.backgroundColor = .secondarySystemBackground
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
+        let addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewItem))
         
-        let addBarButtonItem = UIBarButtonItem(title: "Add", style: .done, target: self, action: #selector(addNewItem))
         self.navigationItem.rightBarButtonItem  = addBarButtonItem
+        
+        let deleteImage = UIImage(systemName: "trash") 
+        let deleteBarButtonItem = UIBarButtonItem(image: deleteImage, style: .done, target: self, action: #selector(addDeleteItem))
+        
+        self.navigationItem.leftBarButtonItem  = deleteBarButtonItem
         
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress))
         view.addGestureRecognizer(longPressRecognizer)
@@ -80,9 +106,6 @@ class ToDoTableViewController: UITableViewController {
     
     private func setupNavigationBarView() {
         title = "To Do"
-        let titleImage = UIImage(systemName: "bag.badge.plus")
-        let imageView = UIImageView(image: titleImage)
-        self.navigationItem.titleView = imageView
         
         navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.label]
@@ -90,36 +113,6 @@ class ToDoTableViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = .label
     }
     
-    
-    //    @IBAction func addNewItemTapped(_ sender: Any) {
-    //
-    //        let alertController = UIAlertController(title: "Do To List", message: "Do you want to add new item?", preferredStyle: .alert)
-    //        alertController.addTextField { textFieldValue in
-    //            textFieldValue.placeholder = "Your title here..."
-    //            print(textFieldValue)
-    //        }
-    //
-    //
-    //        let addActionButton = UIAlertAction(title: "Add", style: .default) { addActions in
-    //            let textField = alertController.textFields?.first
-    //
-    //            let entity = NSEntityDescription.entity(forEntityName: "ToDo", in: self.managedObjectContext!)
-    //            let list = NSManagedObject(entity: entity!, insertInto: self.managedObjectContext)
-    //
-    //            list.setValue(textField?.text, forKey: "item")
-    //            self.saveCoreData()
-    ////            self.toDos.append(textField!.text!)
-    ////            self.tableView.reloadData()
-    //        }
-    //
-    //        let cancelActionButton = UIAlertAction(title: "Cancel", style: .destructive)
-    //
-    //        alertController.addAction(addActionButton)
-    //        alertController.addAction(cancelActionButton)
-    //
-    //        present(alertController, animated: true)
-    //    }
-     
 }
 
 extension UITableView {
@@ -231,47 +224,10 @@ extension ToDoTableViewController {
         saveCoreData()
     }
     
-    /*
-     // Override to support conditional editing of the table view.
-     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the specified item to be editable.
-     return true
-     }
-     */
-    
-    
-    // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
             managedObjectContext?.delete(toDoLists[indexPath.row])
         }
         saveCoreData()
     }
-    
-    
-    /*
-     // Override to support rearranging the table view.
-     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-     
-     }
-     */
-    
-    /*
-     // Override to support conditional rearranging of the table view.
-     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-     // Return false if you do not want the item to be re-orderable.
-     return true
-     }
-     */
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
 }
