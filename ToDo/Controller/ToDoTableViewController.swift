@@ -71,6 +71,7 @@ class ToDoTableViewController: UITableViewController {
         
         let deleteActionButton = UIAlertAction(title: "Delete", style: .default) { deleteAction in
             self.deleteAllCoreData()
+            self.saveCoreData()
         }
         
         let cancelActionButton = UIAlertAction(title: "Cancel", style: .destructive)
@@ -119,7 +120,7 @@ extension ToDoTableViewController {
     }
     
     
-    func deleteAllCoreData(withSave: Bool = true) {
+    func deleteAllCoreData() {
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ToDo")
         
@@ -127,9 +128,7 @@ extension ToDoTableViewController {
         
         do {
             try managedObjectContext?.execute(entityRequest)
-            if withSave {
-                saveCoreData()
-            }
+
         } catch let error {
             print(error.localizedDescription)
             fatalError("Error in saving item inot ToDo")
@@ -170,7 +169,7 @@ extension ToDoTableViewController {
         let movedToDoListsTask = toDoLists.remove(at: sourceIndexPath.row)
         toDoLists.insert(movedToDoListsTask, at: destinationIndexPath.row)
         
-        deleteAllCoreData(withSave: false)
+        deleteAllCoreData()
         saveToDoListArrayFull() //
         
     }
