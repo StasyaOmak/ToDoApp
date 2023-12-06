@@ -24,6 +24,6 @@ The ToDO app has the following key features:
 
 ## Screenshots
 
-![Simulator Screen Recording - iPhone 15 Pro - 2023-11-02 at 14 23 47 (1)](https://github.com/StasyaOmak/Test_Code-Storybord/assets/127408467/bee0746c-ce36-44e2-8058-a1d0307476ea) ![Simulator Screenshot - iPhone 15 Pro - 2023-11-02 at 14 27 15 (1)](https://github.com/StasyaOmak/Test_Code-Storybord/assets/127408467/2ea849a1-586e-478b-a900-f3d2ae22d09e)
+![Simulator Screen Recording - iPhone 15 Pro - 2023-11-02 at 14 23 47 (1)](https://github.com/StasyaOmak/ToDoApp/assets/127408467/04a04d5b-bb90-46dd-8360-371db1a373c2)  ![Simulator Screenshot - iPhone 15 Pro - 2023-11-02 at 14 22 21 (1)](https://github.com/StasyaOmak/ToDoApp/assets/127408467/af85c2c3-b3ff-438c-b518-99e6f7753435)
 
-![Simulator Screenshot - iPhone 15 Pro - 2023-11-02 at 14 22 21 (1)](https://github.com/StasyaOmak/Test_Code-Storybord/assets/127408467/14cec3a5-8753-423b-a4d9-7dd4b1e88ca2)
+![Simulator Screenshot - iPhone 15 Pro - 2023-11-02 at 14 27 15 (1)](https://github.com/StasyaOmak/ToDoApp/assets/127408467/377208eb-32af-4282-9109-c82258cb0247)
